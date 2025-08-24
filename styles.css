@@ -163,7 +163,7 @@ nav a:hover::after {
 .carousel {
     position: relative;
     width: 100%;
-    height: 300px;
+    height: 400px;
     overflow: hidden;
     border-radius: 16px;
     box-shadow: 0 8px 32px var(--shadow-medium);
@@ -177,13 +177,13 @@ nav a:hover::after {
 .carousel-images {
     display: flex;
     width: 300%;
-    height: 100%;
+    height: 550px;
     transition: transform 0.5s ease-in-out;
 }
 
 .carousel-images img {
     width: 33.333%;
-    height: 100%;
+    height: 500px;
     object-fit: cover;
     display: block;
 }
