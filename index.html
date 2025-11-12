@@ -19,7 +19,12 @@
                 </div>
             </div>
             <nav>
-                <ul>
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
                     <li><a href="#mision">Misión</a></li>
                     <li><a href="#vision">Visión</a></li>
                     <li><a href="#valores">Valores</a></li>
@@ -92,12 +97,19 @@
         <div>
             <h2>Valores</h2>
             <ul class="valores-lista">
-                <li>Integridad</li>
-                <li>Innovación</li>
-                <li>Responsabilidad</li>
-                <li>Trabajo en equipo</li>
-                <li>Respeto</li>
+                <li data-explicacion-valores="OOAS ofrece un servicio honesto, de ideas coherentes cumpliendo con los estandares eticos de la industria, haciendo las cosas de una forma correcta generando la confianza de nuestros clientes.">Integridad</li>
+                <li data-explicacion="OOAS introduce e implementa los avances mas actuales del mercado, adecuados a la necesidad de cada cliente en especifico, manteniendo las actualizaciones exigidas por la industria de la aviación moderna.">Innovación</li>
+                <li data-explicacion-valores="OOAS en este sentido cumple los deberes , los compromisos y las obligaciones adquiridas con el cliente a fin de generar un ambiente de confianza y disciplina que necesita la industria actual.">Responsabilidad</li>
+                <li data-explicacion="OOAS optimiza el proceso colaborativo reunniendo un grupo de individuos que con sus diversas habilidades y conocimientos complementan la sinergia para alcanzar la mayor productividad en un objetivo común,"La satisfacion y tranquilidad del cliente">Trabajo en equipo</li>
+                <li data-explicacion="En OOAS el valor de nuetros clientes es fundamental , buscando la armonia, mediante un trato cortes, empatico y considerado a fin de alcanzar los objetivos del proyectos y estos fortalezcan la relacion empresa cliente.">Respeto</li>
             </ul>
+            <div id="explicacion-box" class="explicacion-box">
+                <div class="explicacion-content">
+                    <button class="explicacion-close" onclick="cerrarExplicacion()">&times;</button>
+                    <h3 id="explicacion-titulo"></h3>
+                    <p id="explicacion-texto"></p>
+                </div>
+            </div>
         </div>
     </div>
 </section>

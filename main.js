@@ -2,6 +2,37 @@
 // JavaScript mejorado con funcionalidades profesionales
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Menú hamburguesa para móviles
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    const mobileNavLinks = document.querySelectorAll('.nav-menu a');
+    
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+        });
+        
+        // Cerrar menú al hacer clic en un enlace
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+        
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+    
     // Carrusel automático mejorado
     const carouselImages = document.querySelector('.carousel-images');
     const images = document.querySelectorAll('.carousel-images img');
@@ -239,6 +270,120 @@ document.addEventListener('DOMContentLoaded', () => {
     🔧  Especialistas en mantenimiento y soluciones técnicas
     📧  Contacto: info@ooas.aero
     `);
+
+    // Funcionalidad simple para mostrar explicaciones de valores
+    const valoresItems = document.querySelectorAll('.valores-lista li');
+    const valoresLista = document.querySelector('.valores-lista');
+    const explicacionBox = document.getElementById('explicacion-box');
+    const explicacionTitulo = document.getElementById('explicacion-titulo');
+    const explicacionTexto = document.getElementById('explicacion-texto');
+    
+    // Posicionar el cuadro una sola vez, al lado de la lista completa
+    let posicionInicializada = false;
+    
+    function inicializarPosicion(forzar = false) {
+        if (posicionInicializada && !forzar) return;
+        
+        if (valoresLista) {
+            const rect = valoresLista.getBoundingClientRect();
+            const boxWidth = 450;
+            const padding = 20;
+            const windowWidth = window.innerWidth;
+            
+            // Calcular posición: al lado derecho de la lista
+            let leftPosition = rect.right + 25;
+            
+            // Ajustar si no cabe a la derecha
+            if (leftPosition + boxWidth > windowWidth - padding) {
+                leftPosition = rect.left - boxWidth - 25;
+                if (leftPosition < padding) {
+                    leftPosition = padding;
+                }
+            }
+            
+            // Posición vertical: alineada con el inicio de la lista
+            let topPosition = rect.top;
+            if (topPosition < padding) {
+                topPosition = padding;
+            }
+            
+            // Aplicar posición fija
+            explicacionBox.style.top = topPosition + 'px';
+            explicacionBox.style.left = leftPosition + 'px';
+            posicionInicializada = true;
+        }
+    }
+
+    valoresItems.forEach(item => {
+        item.style.cursor = 'pointer';
+        
+        item.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            const valor = this.textContent.trim();
+            const explicacion = this.getAttribute('data-explicacion');
+            
+            if (!explicacion) return;
+            
+            // Inicializar posición solo la primera vez
+            if (!posicionInicializada) {
+                inicializarPosicion();
+            }
+            
+            const yaEstabaMostrado = explicacionBox.classList.contains('mostrar');
+            const content = explicacionBox.querySelector('.explicacion-content');
+            
+            // Si ya estaba mostrado, agregar efecto de flash/pantallazo mejorado
+            if (yaEstabaMostrado) {
+                // Remover clases anteriores si existen
+                content.classList.remove('flash', 'mostrar-nuevo');
+                
+                // Forzar reflow para reiniciar animación
+                void content.offsetWidth;
+                
+                // Agregar clases de animación
+                content.classList.add('flash', 'mostrar-nuevo');
+                
+                // Actualizar contenido en el momento del flash
+                setTimeout(() => {
+                    explicacionTitulo.textContent = valor;
+                    explicacionTexto.textContent = explicacion;
+                }, 250);
+                
+                // Remover clases después de la animación
+                setTimeout(() => {
+                    content.classList.remove('flash', 'mostrar-nuevo');
+                }, 800);
+            } else {
+                // Primera vez: actualizar contenido inmediatamente
+                explicacionTitulo.textContent = valor;
+                explicacionTexto.textContent = explicacion;
+            }
+            
+            // Mostrar el cuadro (ya está posicionado)
+            explicacionBox.classList.add('mostrar');
+        });
+    });
+    
+    // Recalcular posición si se hace scroll o se redimensiona la ventana
+    window.addEventListener('resize', function() {
+        if (explicacionBox.classList.contains('mostrar')) {
+            inicializarPosicion(true);
+        }
+    });
+    
+    window.addEventListener('scroll', function() {
+        if (explicacionBox.classList.contains('mostrar')) {
+            inicializarPosicion(true);
+        }
+    });
+
+    // Cerrar al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (!explicacionBox.contains(e.target) && !e.target.closest('.valores-lista li')) {
+            explicacionBox.classList.remove('mostrar');
+        }
+    });
 });
 
 // Funciones globales para los botones del carrusel
@@ -275,4 +420,12 @@ function updateCarouselGlobal(index) {
             indicator.classList.remove('active');
         }
     });
+}
+
+// Función para cerrar el cuadro de explicación
+function cerrarExplicacion() {
+    const explicacionBox = document.getElementById('explicacion-box');
+    if (explicacionBox) {
+        explicacionBox.classList.remove('mostrar');
+    }
 }
