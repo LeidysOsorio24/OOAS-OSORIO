@@ -263,6 +263,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Manejo mejorado de imágenes para móviles
+    const allImages = document.querySelectorAll('img');
+    allImages.forEach(img => {
+        // Agregar atributos para mejor carga en móviles
+        if (!img.hasAttribute('loading')) {
+            img.setAttribute('loading', 'lazy');
+        }
+        
+        // Mejorar manejo de errores
+        img.addEventListener('error', function() {
+            if (!this.dataset.errorHandled) {
+                this.dataset.errorHandled = 'true';
+                // Si es el logo, mostrar fallback
+                if (this.classList.contains('logo')) {
+                    const fallback = this.nextElementSibling;
+                    if (fallback) {
+                        this.style.display = 'none';
+                        fallback.style.display = 'flex';
+                    }
+                }
+            }
+        });
+        
+        // Forzar recarga en caso de problemas de red
+        img.addEventListener('load', function() {
+            this.style.opacity = '1';
+        });
+    });
+    
+    // Manejo del formulario de contacto
+    const contactoForm = document.getElementById('contacto-form');
+    
+    if (contactoForm) {
+        contactoForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validar formulario
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            
+            // Mostrar mensaje de confirmación
+            alert('¡Gracias por contactarnos! Hemos recibido su formulario y nos pondremos en contacto con usted a la brevedad posible.\n\nEmail: ' + data.email + '\nTeléfono: ' + data.telefono);
+            
+            // Aquí puedes agregar código para enviar los datos a un servidor
+            // Por ejemplo: fetch('/api/contacto', { method: 'POST', body: JSON.stringify(data) })
+            
+            // Limpiar formulario después de enviar
+            this.reset();
+        });
+    }
+    
     // Console log profesional
     console.log(`
     🛩️  OOAS - Servicios de Mantenimiento Aéreo Profesional
@@ -321,7 +375,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             
             const valor = this.textContent.trim();
-            const explicacion = this.getAttribute('data-explicacion');
+            // Buscar explicación en ambos atributos posibles
+            let explicacion = this.getAttribute('data-explicacion') || this.getAttribute('data-explicacion-valores');
             
             if (!explicacion) return;
             
@@ -330,34 +385,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 inicializarPosicion();
             }
             
-            const yaEstabaMostrado = explicacionBox.classList.contains('mostrar');
-            const content = explicacionBox.querySelector('.explicacion-content');
+            // Actualizar contenido
+            explicacionTitulo.textContent = valor;
+            explicacionTexto.textContent = explicacion;
             
-            // Si ya estaba mostrado, agregar efecto de flash/pantallazo mejorado
-            if (yaEstabaMostrado) {
-                // Remover clases anteriores si existen
-                content.classList.remove('flash', 'mostrar-nuevo');
-                
-                // Forzar reflow para reiniciar animación
-                void content.offsetWidth;
-                
-                // Agregar clases de animación
-                content.classList.add('flash', 'mostrar-nuevo');
-                
-                // Actualizar contenido en el momento del flash
-                setTimeout(() => {
-                    explicacionTitulo.textContent = valor;
-                    explicacionTexto.textContent = explicacion;
-                }, 250);
-                
-                // Remover clases después de la animación
-                setTimeout(() => {
-                    content.classList.remove('flash', 'mostrar-nuevo');
-                }, 800);
-            } else {
-                // Primera vez: actualizar contenido inmediatamente
-                explicacionTitulo.textContent = valor;
-                explicacionTexto.textContent = explicacion;
+            // Si ya estaba mostrado, reiniciar animación
+            if (explicacionBox.classList.contains('mostrar')) {
+                explicacionBox.classList.remove('mostrar');
+                void explicacionBox.offsetWidth; // Forzar reflow
             }
             
             // Mostrar el cuadro (ya está posicionado)
@@ -429,3 +464,4 @@ function cerrarExplicacion() {
         explicacionBox.classList.remove('mostrar');
     }
 }
+
